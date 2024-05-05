@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="foreach" doc:id="0b28d422-e7e4-4455-a4ca-1831cbe1139b" >
+		<http:listener doc:name="Listener" doc:id="7598ae26-eac4-46d4-9acf-91c96d6d3f01" config-ref="Global_Http_Listener" path="/foreach"/>
+		<logger level="INFO" doc:name="Start Foreach" doc:id="57e623fd-5b62-4c8b-882a-6c981301e310" message="Start-Foreach: #[payload]"/>
+		<set-payload doc:name="Array" doc:id="1aca1eaa-2b35-40a0-b9bc-3fe720bed948" value="#[10 to 100]"/>
+		<foreach doc:name="For Each" doc:id="ee2d35cc-62cd-4d5f-9095-3eacc9a6932e" >
+			<logger level="INFO" doc:name="Print Payload" doc:id="74f7e899-a6fb-4fc1-87b3-4d8ff1773f26" message="payload"/>
+		</foreach>
+		<logger level="INFO" doc:name="End Foreach" doc:id="c9a77749-2202-48f0-8d28-efb5716fc80f" message="EndForeach: #[payload]"/>
+		<ee:transform doc:name="Transform Message" doc:id="84196914-a86f-4da6-ae81-a0cb1381e83f" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json	
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="ParalallelforeachFlow" doc:id="bb3a5c42-bd33-4994-b614-7d9ba8799148" >
+		<http:listener doc:name="Listener" doc:id="1985528e-f23e-49ea-b349-cae6362583de" config-ref="Global_Http_Listener" path="/ParalallelforeachFlow" />
+		<logger level="INFO" doc:name="parallel foreach" doc:id="280ddd65-4069-44c7-8088-5d1891a45901" message="Start-parallelforeach: #[payload]"/>
+	</flow>
+</mule>
