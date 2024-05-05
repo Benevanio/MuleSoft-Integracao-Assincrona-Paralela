@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="scather-gather" doc:id="5d79ebaf-5f1f-41d0-b71e-a8012828da1b" >
+		<http:listener doc:name="Listener" doc:id="c921d07f-1e09-418d-817f-24a9f97f5874" config-ref="Global_Http_Listener" path="/scather-gather"/>
+		<logger level="INFO" doc:name="BEFORE SC" doc:id="e1772470-1dda-4485-a0da-a670b56bb3c8" message="BEFORE-SC: #[payload]"/>
+		<scatter-gather doc:name="Scatter-Gather" doc:id="eed36344-1bd4-4da5-a22f-9d717ff9cd98" >
+			<route >
+				<set-payload value='#[{&#10;	"Payload01Name": "Benevanio",&#10;	"Payload01Id":1,&#10;	"Payload01Location": "Brazil",&#10;	"Payload01Salary": 25000&#10;}]' doc:name="Payload01" doc:id="a3498872-c071-4e70-b79c-b8e20ac15ca1" />
+			</route>
+			<route >
+				<set-payload value='#[{&#10;	"Payload02Name": "Beniel",&#10;	"Payload02Id":2,&#10;	"Payload02Location": "Brazil",&#10;	"Payload02Salary": 4500&#10;}]' doc:name="Payload02" doc:id="357bd300-29bd-4adb-a12e-3aa8d403d7fe" />
+			</route>
+			<route >
+				<set-payload value='#[{&#10;	"Payload03Name": "Berlan",&#10;	"Payload03Id":3,&#10;	"Payload03Location": "Brazil",&#10;	"Payload03Salary": 5500&#10;}]' doc:name="Payload03" doc:id="6247ab50-c8c8-4aa9-b3f0-999118968084" />
+			</route>
+		</scatter-gather>
+		<logger level="INFO" doc:name="ENB SC" doc:id="d808cc44-9429-4387-a4d1-1a832a963358" message="END-SC:  #[payload]"/>
+	<ee:transform doc:name="Transform Message" doc:id="a7d104fc-37c9-4c26-ad2b-b93433ff3b64" >
+    <ee:message >
+        <ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload pluck $."payload"]]></ee:set-payload>
+    </ee:message>
+</ee:transform>
+
+	</flow>
+</mule>
