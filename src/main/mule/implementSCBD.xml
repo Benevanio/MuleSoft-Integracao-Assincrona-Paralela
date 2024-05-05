@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="implementSCBDFlow" doc:id="61bd6e6d-0881-40ee-bdd8-b75b44c28df9" >
+		<http:listener doc:name="Listener" doc:id="02b0e801-1220-4635-8977-522f0ea6e9bc" config-ref="Global_Http_Listener" path="/implementDB"/>
+		<scatter-gather doc:name="Scatter-Gather" doc:id="19d3f522-e50d-460e-aa22-113825fea8b1" >
+			<route >
+				<db:select doc:name="Select FROM MYSQL Table 1" doc:id="0a4cf2ee-7ca7-401b-b442-116dcf80f59f" config-ref="Database_Config">
+					<db:sql ><![CDATA[SELECT * FROM mulesoft_tutorial.studentinformation;]]></db:sql>
+				</db:select>
+				<logger level="INFO" doc:name="Log MYSQL" doc:id="ce579d4e-ac2b-4f3c-8c0b-4e5b5dd5c716" message="mysql: #[payload]"/>
+			</route>
+			<route >
+				<db:select doc:name="Select FROM MYSQL Table 2" doc:id="92369983-d7cd-4641-a639-b41b27fa9d97" config-ref="Database_Config">
+					<db:sql ><![CDATA[SELECT * FROM mulesoft_course.customers;]]></db:sql>
+				</db:select>
+				<logger level="INFO" doc:name="Log MYSQL" doc:id="e54d27d0-2ff5-417a-93e9-b9f68492991c" message="table: #[payload]"/>
+			</route>
+		</scatter-gather>
+		<logger level="INFO" doc:name="Log Payload" doc:id="1b886a58-d1b0-4f91-81e2-4e53955bd9ab" message="logger-tables: #[payload]"/>
+		<ee:transform doc:name="Transform Message" doc:id="5d34c34d-3f83-44f1-b85e-54c41866bcb2" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload pluck $."payload"]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
