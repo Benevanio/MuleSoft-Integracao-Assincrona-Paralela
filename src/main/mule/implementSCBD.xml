@@ -31,5 +31,97 @@ output application/json
 payload pluck $."payload"]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
+		<error-handler >
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="71316f01-88d1-4407-8bb8-33df854fc93a" type="DB:BAD_SQL_SYNTAX">
+				<ee:transform doc:name="Transform Message" doc:id="7ff1f8bd-9954-4f6d-bd1d-688476dd368c" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	API: Mule::p("api_name"),
+	ErrorDescription: error.description,
+	ErrorType: error.errorType.identifier,
+	EventID: correlationId,
+	(custom: error.errorMessage.payload)
+	
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<logger level="INFO" doc:name="Logger" doc:id="92651a3e-0eb3-4d1e-a7da-5cfe3b3b8d02" message="SQL-SYNTAX: #[payload]"/>
+			</on-error-propagate>
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="da83e20d-5f6a-4ef9-bbaa-ccd4cf963e22" type="DB:CONNECTIVITY" >
+				<ee:transform doc:name="Transform Message" doc:id="5a751103-0da4-425f-bbd7-df71d7eb450d" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	API: Mule::p("api_name"),
+	ErrorDescription: error.description,
+	ErrorType: error.errorType.identifier,
+	EventID: correlationId,
+	(custom: error.errorMessage.payload)
+	
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<logger level="INFO" doc:name="Logger" doc:id="e0e3241f-7888-4ac0-a2d3-a5e9342d0850" message="CONNECTIVITY: #[payload]" />
+			</on-error-propagate>
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="e8aab2e9-98d2-4e3e-a847-bc418565022f" type="DB:QUERY_EXECUTION" >
+				<ee:transform doc:name="Transform Message" doc:id="86344b3d-df03-4c44-93f2-b96989db8603" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	API: Mule::p("api_name"),
+	ErrorDescription: error.description,
+	ErrorType: error.errorType.identifier,
+	EventID: correlationId,
+	(custom: error.errorMessage.payload)
+	
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<logger level="INFO" doc:name="Logger" doc:id="a1381cf4-760d-4cd1-9aea-a215b95bb64b" message="DB:QUERY_EXECUTION: #[payload]" />
+			</on-error-propagate>
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="a93f1580-9526-478a-9cc8-3c7ebbbf0d1d" type="EXPRESSION, STREAM_MAXIMUM_SIZE_EXCEEDED" >
+				<ee:transform doc:name="Transform Message" doc:id="9338375a-9231-418a-a84f-c0d9c0d19969" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	API: Mule::p("api_name"),
+	ErrorDescription: error.description,
+	ErrorType: error.errorType.identifier,
+	EventID: correlationId,
+	(custom: error.errorMessage.payload)
+	
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<logger level="INFO" doc:name="Logger" doc:id="d874c570-48b5-4134-9f0d-72ae680c0f22" message="EXPRESSION-STREAM_MAXIMUM_SIZE_EXCEEDED: #[payload]" />
+			</on-error-propagate>
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="47b3183c-bab6-46e0-b490-c8ed6df6c0ad" type="ANY" >
+				<ee:transform doc:name="Transform Message" doc:id="42d4fb73-1616-4363-9511-a2ec03a8da01" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	API: Mule::p("api_name"),
+	ErrorDescription: error.description,
+	ErrorType: error.errorType.identifier,
+	EventID: correlationId,
+	(custom: error.errorMessage.payload)
+	
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<logger level="INFO" doc:name="Logger" doc:id="237c2d70-86e2-481a-a6e6-89c76c0bfb10" message="EXPRESSION-STREAM_MAXIMUM_SIZE_EXCEEDED: #[payload]" />
+			</on-error-propagate>
+		</error-handler>
 	</flow>
 </mule>
