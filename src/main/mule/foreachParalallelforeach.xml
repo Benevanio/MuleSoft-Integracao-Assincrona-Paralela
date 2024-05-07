@@ -16,14 +16,50 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 		<ee:transform doc:name="Transform Message" doc:id="84196914-a86f-4da6-ae81-a0cb1381e83f" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
-output application/json	
+output application/json
 ---
-payload]]></ee:set-payload>
+payload..payload]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
+		<error-handler >
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="d0703e6a-f05a-4041-8475-d53fdb555c62" type="ANY">
+				<ee:transform doc:name="Transform Message" doc:id="5a15413a-1ec4-4197-a051-1d2762e627e7" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"ErrorType": error.errorType.identifier,
+	"ErrorDescription": error.description,
+	"EventID": correlationId,
+	("Custom": error.errorMessage.payload)
+	
+}
+	]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<logger level="INFO" doc:name="Logger" doc:id="878b4709-5000-4f8d-be63-9598940489b4" message="#[payload]"/>
+			</on-error-propagate>
+		</error-handler>
 	</flow>
 	<flow name="ParalallelforeachFlow" doc:id="bb3a5c42-bd33-4994-b614-7d9ba8799148" >
 		<http:listener doc:name="Listener" doc:id="1985528e-f23e-49ea-b349-cae6362583de" config-ref="Global_Http_Listener" path="/ParalallelforeachFlow" />
 		<logger level="INFO" doc:name="parallel foreach" doc:id="280ddd65-4069-44c7-8088-5d1891a45901" message="Start-parallelforeach: #[payload]"/>
+		<set-payload value="#[1 to 20]" doc:name="Array" doc:id="6b4978b9-ded0-40a2-9a2e-e72ffd352166" />
+		<parallel-foreach doc:name="Parallel For Each" doc:id="343f07a0-731a-4033-be0e-f38627d0dd04" >
+			<logger level="INFO" doc:name="Print Payload" doc:id="5634250b-8036-4216-91cc-fd7a6b8c8853" message="payload" />
+		</parallel-foreach>
+		<logger level="INFO" doc:name="End Foreach" doc:id="c185a18b-7599-4241-a0f5-e4328c45aa37" message="EndForeach: #[payload]" />
+		<ee:transform doc:name="Transform Message" doc:id="2bb1a553-45f5-4583-b673-45bf3e444fef" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	Payload: payload..payload,
+	Time: now()
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
 	</flow>
 </mule>
