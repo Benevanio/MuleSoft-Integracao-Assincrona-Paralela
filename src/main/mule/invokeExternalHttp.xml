@@ -1,0 +1,63 @@
+<!-- [STUDIO:"dataUSAIO"]<?xml version="1.0" encoding="UTF-8"?> [STUDIO] -->
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="8de106af-cf39-4766-8194-4a792cce6483" >
+		<http:request-connection protocol="HTTPS" host="catfact.ninja" />
+	</http:request-config>
+	<http:request-config name="HTTP_Request_configuration1" doc:name="HTTP Request configuration" doc:id="47923067-3107-438f-8b58-8e0032f01972" >
+		<http:request-connection protocol="HTTPS" host="api.agify.io" />
+	</http:request-config>
+	<flow name="public-api-cat-fact" doc:id="7caaf13c-1895-4151-9796-d1207e9c2cc6" >
+		<http:listener doc:name="Listener" doc:id="f7ff0ba1-50bc-477d-83a2-6942dcae6031" config-ref="Global_Http_Listener" path="/invokeexternalhttpp"/>
+		<http:request method="GET" doc:name="Request" doc:id="14409bb3-fc76-437a-a677-c79dd00b528c" config-ref="HTTP_Request_configuration" path="/fact"/>
+		<logger level="INFO" doc:name="Logger" doc:id="5c850087-ec7e-4ab9-a124-72c8969c396e" message="cat-ninja: #[payload]"/>
+	</flow>
+	
+	<flow name="invokeExternalHttpFlow" doc:id="66e1e681-4035-486f-8024-5bd88a6ce4e3" >
+		<http:listener doc:name="Listener" doc:id="e8b82630-3a6c-4864-adb0-b4a92bb0feda" config-ref="Global_Http_Listener" path="/meeladapi"/>
+		<set-variable value="#[attributes.queryParams.name]" doc:name="extractqueryParams" doc:id="a3da1345-1f46-4801-bcc1-71fa31b5b6af" variableName="nameS"/>
+		<http:request method="GET" doc:name="Invoke  Agify.io" doc:id="914942ab-cbdf-4d5e-8cba-e73003e2db3e" config-ref="HTTP_Request_configuration1" path="?name=#[vars.nameS]">
+		</http:request>
+		<logger level="INFO" doc:name="Logger" doc:id="d043112a-ee99-4198-9f29-5631b47d3c4e" message="#[payload]"/>
+	</flow>
+	<flow name="dataUSAIO" doc:id="09fe0bc0-0e38-4d6e-90df-e7563091c7fe">
+    <http:listener doc:name="Listener" doc:id="e6eda39a-8d44-4598-9d26-acaf4ab6ab93" config-ref="Global_Http_Listener" path="/datausaio" allowedMethods="GET"/>
+    <http:request method="GET" doc:name="Request" doc:id="342650c6-5e59-43ca-b08f-529dc3fd3d5a" config-ref="HTTP_Request_dataUSA" path="/data">
+        <http:query-params><![CDATA[#[{
+            drilldowns: attributes.queryParams.qDrills,
+            measures: attributes.queryParams.qNation
+        }]]]></http:query-params>
+    </http:request>
+    <logger level="DEBUG" doc:name="Log debug" doc:id="c3b80873-03d9-4265-b1d3-2a2ac64aeacd" message="#[payload]"/>
+    <ee:transform doc:name="dataUsaIO" doc:id="41c2e0f0-f65c-4b50-ad66-3ce83d371d5e">
+        <ee:message>
+            <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload.data]]></ee:set-payload>
+        </ee:message>
+    </ee:transform>
+</flow>
+	<flow name="invokeAPIINFO" doc:id="7162ce6d-5eb5-4dbc-a81d-3074b2e251f2" >
+		<http:listener doc:name="Listener" doc:id="18580579-59b0-4115-baf5-fd0e9833b44b" config-ref="Global_Http_Listener" path="/invokeAPIinfoIp/{passIPAddress}/{name}"/>
+		<http:request method="GET" doc:name="Request" doc:id="85ca2a0f-0a48-488e-a200-aa0170af1a37" config-ref="HTTP_Request_API_Info" path="/{value1}/{value2}">
+			<http:uri-params ><![CDATA[#[{
+	value1: attributes.uriParams.passIPAddress,
+	value2: attributes.uriParams.name
+}]]]></http:uri-params>
+		</http:request>
+		<ee:transform doc:name="Payload" doc:id="7f71e6e5-a71d-4d62-9d49-d573a8984fff" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	
+</mule>

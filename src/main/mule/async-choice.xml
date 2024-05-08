@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="async-choiceFlow" doc:id="b16c4b58-14ef-45eb-8108-3b19a75d6c01" >
+		<http:listener doc:name="Listener" doc:id="c4036683-a5f3-4569-876e-7a8aedbc1286" config-ref="Global_Http_Listener" path="/asynchoice"/>
+		<logger level="INFO" doc:name="Before async Scope" doc:id="4d471b9c-e956-4c9c-ae95-c97b8e65c203" message="before-async-scope: #[payload]"/>
+		<async doc:name="Async Choice in mulesoft introduction" doc:id="043840fc-6e17-478b-9815-ed8df0440a6e" >
+			<logger level="INFO" doc:name="Async Scope Start" doc:id="485a5bfb-f8a2-4346-8d9d-d69d357c25c6" message="async-scope-start: #[payload]"/>
+			<flow-ref doc:name="Flow Reference" doc:id="6297dc6e-c075-4b92-9be5-90925ee45abd" name="api-invoke-poc-subflow"/>
+			<choice doc:name="Choice" doc:id="a702443c-5b03-4496-8182-8fd53e059891" >
+				<when expression='#[payload.ip == "161.185.160.93"]'>
+					<flow-ref doc:name="Flow Reference" doc:id="da6701fc-8bc1-4495-9227-598bc6abba91" name="abstract-flow-for-async" />
+				</when>
+				<when expression='#[payload.ip == "168.185.160.93"]'>
+					<flow-ref doc:name="Flow Reference" doc:id="cb42ae30-5c9c-4ff3-9501-d5e8960b5272" />
+				</when>
+				<otherwise >
+					<logger level="INFO" doc:name="Logger" doc:id="a8bcc75d-46df-4a73-99ce-de7e5d4aade7" message="#[payload]"/>
+				</otherwise>
+			</choice>
+			<logger level="INFO" doc:name="Async Scope End" doc:id="8aad8509-1491-420d-be49-e48377bb473a" message="async-scope-end: #[payload]"/>
+		</async>
+		<logger level="INFO" doc:name="After async Scope1" doc:id="df8170c8-6d3e-4f17-949a-1b24c00fb892" message="After-async-scope: #[payload]" />
+	</flow>
+	<sub-flow name="api-invoke-poc-subflow" doc:id="7bb489ed-7fa9-4dd6-acf3-251d2b902c85" >
+		<logger level="INFO" doc:name="Start Logger" doc:id="b5990456-512f-4cca-9e98-3b7139920e6e" message="api-info-subflow: #[payload]"/>
+		<http:request method="GET" doc:name="Request" doc:id="cdeac26f-6a42-4030-8e14-02ee0af2cd59" url="https://ipinfo.io/161.185.160.93/geo">
+		</http:request>
+		<ee:transform doc:name="Payload" doc:id="1c33ca35-c1b9-4a3c-8749-921365296996">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="End Logger" doc:id="cf5b990e-f10d-4c6d-893d-fb393b67fd74" message="end-logger-subflow: #[payload]"/>
+	</sub-flow>
+	<sub-flow name="abstract-flow-for-async" doc:id="ca3dfedf-012e-4a4a-83ee-a2ef9acb39a7" >
+		<logger level="INFO" doc:name="Start Logger" doc:id="e84c42ef-7e34-4c9f-9dce-4c19b90ffaf8" message="abstract-subflow-start: #[payload]" />
+		<set-payload value='#[{&#10;    "nome": "Benevanio Dos Santos Conceição",&#10;    "idade": 30,&#10;    "sexo": "masculino",&#10;    "escolaridade": "Graduação em Engenharia de Software",&#10;    "trabalho": "Analista de sistemas"&#10;}]' doc:name="Set Payload" doc:id="8294031b-ddf6-4eb8-b8e3-0a55ced87665" />
+		<logger level="INFO" doc:name="End Logger" doc:id="0ff896d2-56b9-4ffd-adb6-8daa7b784490" message="abstract-subflow-end:#[payload]" />
+	</sub-flow>
+</mule>

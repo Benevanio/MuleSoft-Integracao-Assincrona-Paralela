@@ -12,4 +12,10 @@ http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/cu
 	<db:config name="Database_Config" doc:name="Database Config" doc:id="6fa1a1ff-0c9f-4f08-86b0-e3f82a594d58" >
 		<db:my-sql-connection host="localhost" port="3306" user="root" password="194836" database="mulesoft_tutorial" />
 	</db:config>
+	<http:request-config name="HTTP_Request_dataUSA" doc:name="HTTP Request configuration" doc:id="5b60b463-c016-4b83-ade7-93787c89d202" basePath="/api" >
+		<http:request-connection protocol="HTTPS" host="datausa.io" />
+	</http:request-config>
+	<http:request-config name="HTTP_Request_API_Info" doc:name="HTTP Request configuration" doc:id="f005c2d4-8476-4fed-91a0-26fd69041df6" >
+		<http:request-connection protocol="HTTPS" host="ipinfo.io" />
+	</http:request-config>
 </mule>

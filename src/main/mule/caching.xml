@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<ee:object-store-caching-strategy name="Caching_Strategy" doc:name="Caching Strategy" doc:id="7a3eb4f3-071d-48ad-9678-c1a7fbd5e842" />
+	<flow name="public-api-cat-fact-cache" doc:id="7adfbdd6-aba0-4c00-b591-06d3a0981e50" >
+		<http:listener doc:name="Listener" doc:id="ee39811f-41a2-43fd-a7ce-264e7eba4b73" config-ref="Global_Http_Listener" path="/invokeexternalhttppcache" />
+		<logger level="INFO" doc:name="Outside Cache" doc:id="4cf3a99f-eac7-42ef-9f31-0e452dc8882c" message=" Outside-Cache: #[payload]"/>
+		<ee:cache doc:name="Cache for cat-fact" doc:id="f1d2bcbf-dec4-4ca7-b68c-4baab97afde4" cachingStrategy-ref="Caching_Strategy">
+			<logger level="INFO" doc:name="cat-ninja-cache-start" doc:id="722604cc-7f30-4ae2-b9a1-8cedef2382e5" message="cat-ninja-cache-start: #[payload]" />
+			<http:request method="GET" doc:name="Request" doc:id="24921aff-e20e-4fdf-95cd-b1a39c5a66d7" config-ref="HTTP_Request_configuration" path="/fact" />
+			<ee:transform doc:name="Transform Message" doc:id="55393e8b-bf50-46de-aad6-071774e708a6" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<logger level="INFO" doc:name="cat-ninja-cache-end" doc:id="1ef4e066-ef5f-4e3a-a0c6-47d557a61894" message="cat-ninja-cache-end: #[payload]"/>
+		</ee:cache>
+		<logger level="INFO" doc:name="Outside Cache End" doc:id="97e7883d-033d-4eb7-a93f-2c8e678cb3e9" message=" Outside-Cache-End: #[payload]"/>
+	</flow>
+</mule>
