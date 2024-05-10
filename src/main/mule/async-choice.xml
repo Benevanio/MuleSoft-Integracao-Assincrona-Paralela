@@ -16,7 +16,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 					<flow-ref doc:name="Flow Reference" doc:id="da6701fc-8bc1-4495-9227-598bc6abba91" name="abstract-flow-for-async" />
 				</when>
 				<when expression='#[payload.ip == "168.185.160.93"]'>
-					<flow-ref doc:name="Flow Reference" doc:id="cb42ae30-5c9c-4ff3-9501-d5e8960b5272" />
+					<flow-ref doc:name="Flow Reference" doc:id="cb42ae30-5c9c-4ff3-9501-d5e8960b5272" name="abstract-flow-for-async"/>
 				</when>
 				<otherwise >
 					<logger level="INFO" doc:name="Logger" doc:id="a8bcc75d-46df-4a73-99ce-de7e5d4aade7" message="#[payload]"/>

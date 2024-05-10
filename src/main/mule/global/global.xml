@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:http="http://www.mulesoft.org/schema/mule/http"
-	xmlns="http://www.mulesoft.org/schema/mule/core"
-	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+<mule xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
-http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd">
 	<configuration-properties doc:name="Configuration properties" doc:id="b3aac6c1-9941-4024-9b1d-11f372f7886e" file="configurations.properties" />
 	<http:listener-config name="Global_Http_Listener" doc:name="HTTP Listener config" doc:id="dae2682c-f81b-407c-9d77-5637f6ed6349" >
 		<http:listener-connection host="0.0.0.0" port="${http.port}" />
@@ -18,4 +19,7 @@ http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/cu
 	<http:request-config name="HTTP_Request_API_Info" doc:name="HTTP Request configuration" doc:id="f005c2d4-8476-4fed-91a0-26fd69041df6" >
 		<http:request-connection protocol="HTTPS" host="ipinfo.io" />
 	</http:request-config>
+	<file:config name="File_Config" doc:name="File Config" doc:id="94672c2a-cc25-4b65-b7cb-de278f6312b3" >
+		<file:connection workingDir="C:\Users\benev\Mulesoft_course\fileOperations" />
+	</file:config>
 </mule>

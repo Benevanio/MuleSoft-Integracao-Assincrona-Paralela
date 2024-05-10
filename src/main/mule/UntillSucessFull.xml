@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="UntillSucessFullFlow" doc:id="c009fa25-4859-44e9-b8a9-029e5fef8711" >
+		<http:listener doc:name="Listener" doc:id="56fe253a-5555-480c-98ce-794ea1df1747" config-ref="Global_Http_Listener" path="/untilSucessFull"/>
+		<until-successful maxRetries="5" doc:name="Until Successful" doc:id="b6240969-bb0c-4008-848d-69814925edbc" >
+			<file:write doc:name="Write" doc:id="64d024d3-2c4f-4c0b-b731-24722a7d945e" path="C:\Users\benev\OperationsFile\mulesoft" createParentDirectories="false">
+			<file:content><![CDATA[#[%dw 2.0
+output application/json
+---
+{
+	"Bene": "Santos",
+	"Salario": 100000,
+	"Idade":2500,
+	"Faculdade": "Engenharia De puta"
+}]]]></file:content>
+		</file:write>
+		</until-successful>
+<!-- [STUDIO:"Rename"]		<file:rename doc:name="Rename" doc:id="9003dc13-9c88-4614-a802-8015fc3cc99b" path="C:\Users\benev\OperationsFile\AoPotencia.txt" to="mulesoft"/> [STUDIO] -->
+		<file:read doc:name="Read" doc:id="8e2eb70f-8d99-472c-a1a5-a40dc3d623ea" path="C:\Users\benev\OperationsFile\mulesoft"/>
+		<ee:transform doc:name="Transform Message" doc:id="734ebf7a-04a6-4484-ae1c-5f4bd72400f1" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

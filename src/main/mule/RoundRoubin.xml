@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="RoundRoubinFlow" doc:id="19a60fc5-b9df-481b-8a27-1e6ba645e3d4" >
+		<http:listener doc:name="Listener" doc:id="e7e820f9-e8d9-4393-9571-6eef5d2b5f65" config-ref="Global_Http_Listener" path="/invokeroundrobin"/>
+		<logger level="INFO" doc:name="START LOGGER" doc:id="9442eb90-b3b7-46ad-8187-b2f953c885aa" message="start-logger: #[payload]"/>
+		<round-robin doc:name="Round Robin" doc:id="b3e4ad47-c8d2-4a6f-bd8c-60fc0e3a6bf4" >
+			<route >
+				<http:request method="GET" doc:name="Request API AGIFY" doc:id="236e2e6e-87d3-4cbf-895b-19cb02d5149b" url="https://api.agify.io?name=meelad"/>
+				<logger level="INFO" doc:name="Logger AGIFY" doc:id="c77259d4-fada-4fa6-a054-538cebf265f0" message="agify:#[payload]"/>
+				<ee:transform doc:name="Transform Message" doc:id="e3d03a2b-f562-42cf-80a5-02db274806e5" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</route>
+			<route >
+				<http:request method="GET" doc:name="Request API GEO" doc:id="c6a67b13-be68-44c4-a7f2-59ee46382b06" url="https://ipinfo.io/161.185.160.93/geo"/>
+				<logger level="INFO" doc:name="Logger GEO" doc:id="fcc9d2af-ee57-4763-bdfb-06345e1d5a68" message="geo: #[payload]"/>
+				<ee:transform doc:name="Transform Message" doc:id="42003e0a-69f5-4615-a8b2-8608d8f3b6f7">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</route>
+		</round-robin>
+		<logger level="INFO" doc:name="END LOGGER" doc:id="28b4b6de-7fdb-4f2e-bc7d-22af815fa346" message="end-logger: #[payload]"/>
+	</flow>
+	<flow name="FirstSuccessful" doc:id="f982ecb8-fafe-4ec8-97ef-99e5c274e8c7" >
+		<http:listener doc:name="Listener" doc:id="31e2d3be-e90c-4472-9033-ef114b4e1369" config-ref="Global_Http_Listener" path="/firstsucessful" />
+		<logger level="INFO" doc:name="START LOGGER" doc:id="4f41575d-af49-4c7b-88f5-d5c49b144556" message="start-logger: #[payload]" />
+		<first-successful doc:name="First Successful" doc:id="b50f7a7c-2482-4880-a67b-b5634093772f" >
+			<route >
+				<http:request method="GET" doc:name="Request API AGIFY" doc:id="044e2d96-d3c0-46ef-8d85-480d270c72e2" url="https://api.agify.io?name=meelad" />
+				<logger level="INFO" doc:name="Logger AGIFY" doc:id="8e5f1c05-0028-41ef-a0f2-62746daf2225" message="agify:#[payload]" />
+				<ee:transform doc:name="Transform Message" doc:id="58336189-c887-4f14-a490-bbef7d82ac40" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</route>
+			<route >
+				<http:request method="GET" doc:name="Request API GEO" doc:id="d754d15b-a747-4e54-8c8b-19bcb2a10bfb" url="https://ipinfo.io/161.185.160.93/geo" />
+				<logger level="INFO" doc:name="Logger GEO" doc:id="aae7359f-7dcb-489c-a4e6-a1ca2a34c983" message="geo: #[payload]" />
+				<ee:transform doc:name="Transform Message" doc:id="d52102b5-cf70-4e29-b7d2-fe92b88f3aaf" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</route>
+		</first-successful>
+		<logger level="INFO" doc:name="END LOGGER" doc:id="47dcdcfa-324e-4584-af74-6de93d87a908" message="end-logger: #[payload]" />
+	</flow>
+</mule>
